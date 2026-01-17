@@ -39,5 +39,29 @@ public class FileService {
             throw new RuntimeException("Failed to upload file to Cloudinary", e);
         }
     }
+    public String delete(String publicId) {
+        try {
+            Map<?, ?> result = cloudinary.uploader().destroy(
+                    publicId,
+                    ObjectUtils.asMap("resource_type", "image")
+            );
+
+            String status = result.get("result").toString();
+
+            if ("ok".equals(status)) {
+                return "File deleted successfully";
+            }
+
+            if ("not found".equals(status)) {
+                throw new RuntimeException("File not found");
+            }
+
+            throw new RuntimeException("Unexpected Cloudinary response: " + status);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete file", e);
+        }
+    }
+
 }
 
